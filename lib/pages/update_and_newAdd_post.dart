@@ -1,20 +1,30 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
+
 import 'package:bloc/services/http_service.dart';
 import 'package:bloc/stores/upd_new_store.dart';
 import 'package:flutter/material.dart';
 
 class UpdateAndAdd extends StatefulWidget {
-  const UpdateAndAdd({ Key? key, required this.title, required this.id }) : super(key: key);
+  const UpdateAndAdd({ Key? key, required this.title, required this.id, this.post }) : super(key: key);
   final String title;
   final String id;
+  final dynamic post;
   @override
   State<UpdateAndAdd> createState() => _UpdateAndAddState();
 }
 
 class _UpdateAndAddState extends State<UpdateAndAdd> {
-
+  
   UpdNew updnew = UpdNew();
+   
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    updnew.choose(widget.post);
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +33,7 @@ class _UpdateAndAddState extends State<UpdateAndAdd> {
       title: Text(widget.title),
       centerTitle: true,
       ),
-      body: Container(
+      body: updnew.loading?Center(child: CircularProgressIndicator(),):Container(
         alignment: Alignment.center,
         padding: EdgeInsets.all(10),
         child: Column(
@@ -100,6 +110,7 @@ class _UpdateAndAddState extends State<UpdateAndAdd> {
               height: 50,
               minWidth: double.infinity,
               onPressed: (){
+                
               updnew.apiPostAdd(widget.title,widget.id);
             },
              child: Text("Ok",style: TextStyle(color: Colors.white),),
