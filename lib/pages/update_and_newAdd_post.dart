@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:bloc/services/http_service.dart';
+import 'package:bloc/stores/upd_new_store.dart';
 import 'package:flutter/material.dart';
 
 class UpdateAndAdd extends StatefulWidget {
@@ -12,42 +13,8 @@ class UpdateAndAdd extends StatefulWidget {
 }
 
 class _UpdateAndAddState extends State<UpdateAndAdd> {
-  final titleController = TextEditingController();
-  final bodyController = TextEditingController();
-  final userIdController = TextEditingController();
-  final idController = TextEditingController();
 
-  
-  _apiPostAdd()async{
-    if(widget.title=="Add"){
-      Map<String,String> params = {
-      "title":titleController.text.trim(),
-      "body":bodyController.text.trim(),
-      "userId":userIdController.text.trim()
-    };
-
-  var respons = await Network.POST(Network.API_CREATE, params);
-  if(respons!=null){
-    Navigator.pop(context,true);
-  }
-    }else{
-     
-     Map<String,String> params = {
-      "id":idController.text.trim(),
-      "title":titleController.text.trim(),
-      "body":bodyController.text.trim(),
-      "userId":userIdController.text.trim()
-    };
-    
-    var respons = await Network.PUT(Network.API_UPDATE+widget.id, params);
-  if(respons!=null){
-    Navigator.pop(context,true);
-  }
-
-    }
-  }
-
-
+  UpdNew updnew = UpdNew();
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +31,7 @@ class _UpdateAndAddState extends State<UpdateAndAdd> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TextField(
-              controller: titleController,
+              controller: updnew.titleController,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
                 labelText: "title",
@@ -79,7 +46,7 @@ class _UpdateAndAddState extends State<UpdateAndAdd> {
             ),
             SizedBox(height: 10,),
             TextField(
-              controller: bodyController,
+              controller: updnew.bodyController,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
                 labelText: "body",
@@ -94,7 +61,7 @@ class _UpdateAndAddState extends State<UpdateAndAdd> {
             ),
              SizedBox(height: 10,),
             TextField(
-              controller: userIdController,
+              controller: updnew.userIdController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
@@ -112,7 +79,7 @@ class _UpdateAndAddState extends State<UpdateAndAdd> {
               children: [
                 SizedBox(height: 10,),
             TextField(
-              controller: idController,
+              controller: updnew.idController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
@@ -133,7 +100,7 @@ class _UpdateAndAddState extends State<UpdateAndAdd> {
               height: 50,
               minWidth: double.infinity,
               onPressed: (){
-              _apiPostAdd();
+              updnew.apiPostAdd(widget.title,widget.id);
             },
              child: Text("Ok",style: TextStyle(color: Colors.white),),
              color: Colors.blue,)

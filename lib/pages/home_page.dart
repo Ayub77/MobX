@@ -3,7 +3,9 @@
 import 'package:bloc/model/post_model.dart';
 import 'package:bloc/pages/update_and_newAdd_post.dart';
 import 'package:bloc/services/http_service.dart';
+import 'package:bloc/stores/home_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,44 +17,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
  
- bool loading = false;
- List<Post> items = [];
-
- _apiPostList()async{
-   setState(() {
-     loading = true;
-   });
-    var respons = await Network.GET(Network.API_LIST, Network.paramsEmpty());
-    setState(() {
-      if(respons!=null){
-      items = Network.parsePostList(respons);
-    }else{
-      items = [];
-    }
-    loading = false;
-    });
- }
-
-
- _apiPostdelete(Post post)async{
-   setState(() {
-     loading = true;
-   });
-  var respons = await Network.DEL(Network.API_DELETE+post.id.toString(), Network.paramsEmpty());
-  setState(() {
-    if(respons!=null){
-      _apiPostList();
-    }
-    loading = false;
-  });
-
- }
+ HomeStore store =  HomeStore();
 
  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _apiPostList();
+    store.apiPostList();
   }
 
   @override
@@ -62,15 +33,17 @@ class _HomePageState extends State<HomePage> {
         title: Text("setState"),
         centerTitle: true,
       ),
-      body: Stack(
+      body: Observer(
+        builder: (_)=>Stack(
         children: [
           ListView.builder(
-            itemCount: items.length,
+            itemCount: store.items.length,
             itemBuilder:(context,index){
-              return itemOfPost(items[index]);
+              return itemOfPost(store.items[index]);
             } ),
-           loading?Center(child: CircularProgressIndicator(),):SizedBox.shrink() 
+           store.loading?Center(child: CircularProgressIndicator(),):SizedBox.shrink() 
         ],
+      ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
@@ -78,7 +51,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: (){
            Navigator.of(context).push(MaterialPageRoute(builder: (context) => UpdateAndAdd(title: "Add",id: "0",))).then((value){
              if(value){
-               _apiPostList();
+               store.apiPostList();
              }
            });
         },
@@ -98,7 +71,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: (value){
           Navigator.of(context).push(MaterialPageRoute(builder: (context) => UpdateAndAdd(title: "Update",id: post.id.toString(),))).then((value){
              if(value){
-               _apiPostList();
+               store.apiPostList();
              }
            });
           },
@@ -113,7 +86,7 @@ class _HomePageState extends State<HomePage> {
       children: [
         SlidableAction(
           onPressed: (value){
-          _apiPostdelete(post);
+          store.apiPostdelete(post);
           },
          backgroundColor: Colors.red,
          icon: Icons.delete,
