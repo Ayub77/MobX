@@ -13,7 +13,7 @@ abstract class _UpdNew with Store{
  @observable final userIdController = TextEditingController();
  @observable final idController = TextEditingController();
  @observable bool loading = false; 
-  apiPostAdd(String title,String id)async{
+  apiPostAdd(String title,String id,context)async{
     if(title=="Add"){
       loading = true;
        Map<String,String> params1 = {
@@ -25,10 +25,11 @@ abstract class _UpdNew with Store{
   var respons = await Network.POST(Network.API_CREATE, params1);
   if(respons!=null){
    loading = false;
+    Navigator.pop(context,true);
   }
     }
   else{
-    loading = true;   
+    loading = true;
      Map<String,String> params2 = {
       "id":idController.text.trim(),
       "title":titleController.text.trim(),
@@ -38,6 +39,7 @@ abstract class _UpdNew with Store{
     var respons = await Network.PUT(Network.API_UPDATE+id, params2);
   if(respons!=null){
    loading = false;
+    Navigator.pop(context,true);
   }
     }
   }

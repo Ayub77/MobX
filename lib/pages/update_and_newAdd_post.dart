@@ -23,7 +23,9 @@ class _UpdateAndAddState extends State<UpdateAndAdd> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if(widget.title=="Update"){
     updnew.choose(widget.post);
+    }
   } 
 
   @override
@@ -110,8 +112,7 @@ class _UpdateAndAddState extends State<UpdateAndAdd> {
               height: 50,
               minWidth: double.infinity,
               onPressed: (){
-                
-              updnew.apiPostAdd(widget.title,widget.id);
+              updnew.apiPostAdd(widget.title,widget.id,context);
             },
              child: Text("Ok",style: TextStyle(color: Colors.white),),
              color: Colors.blue,)
